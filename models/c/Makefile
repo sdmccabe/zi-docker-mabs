@@ -1,4 +1,4 @@
-CC = musl-gcc
+CC = gcc
 CFLAGS = 
 TARGET = Zero\ Intelligence\ Traders-pthreads
 

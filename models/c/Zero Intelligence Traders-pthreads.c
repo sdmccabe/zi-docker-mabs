@@ -67,6 +67,7 @@
 
 	int agentsPerThread;
 	int tradesPerThread;
+	unsigned int *seeds;
 
 
 /////////////////
@@ -93,6 +94,7 @@ void InitializeAgents()
 {	
 	Buyers = (int*)malloc(numberOfBuyers * sizeof(Agent));
 	Sellers = (int*)malloc(numberOfSellers * sizeof(Agent));
+	seeds = (unsigned int*)malloc(numThreads * sizeof(unsigned int));
 	int i;
 
  	//	First the buyers...
@@ -120,6 +122,7 @@ void *DoTrades (void *threadN)
 	int i, buyerIndex, sellerIndex;
 	int bidPrice, askPrice, transactionPrice;
 	int threadNum = *(int*) threadN;
+	printf("%d\n",threadNum);
 	
 	int lowerBuyerBound, upperBuyerBound, lowerSellerBound, upperSellerBound;
 	
@@ -133,19 +136,19 @@ void *DoTrades (void *threadN)
 	for (i=1; i<=tradesPerThread; i++)
 	{
 	 	//	Pick a buyer at random, then pick a 'bid' price randomly between 1 and the agent's private value;
-		buyerIndex = lowerBuyerBound + rand() % (upperBuyerBound - lowerBuyerBound);
-		bidPrice = (rand() % Buyers[buyerIndex].value) + 1;
+		buyerIndex = lowerBuyerBound + rand_r(&seeds[threadNum]) % (upperBuyerBound - lowerBuyerBound);
+		bidPrice = (rand_r(&seeds[threadNum]) % Buyers[buyerIndex].value) + 1;
 
 	 	//	Pick a seller at random, then pick an 'ask' price randomly between the agent's private value and maxSellerValue;
-		sellerIndex = lowerSellerBound + rand() % (upperSellerBound - lowerSellerBound);
-		askPrice = Sellers[sellerIndex].value + (rand() % (maxSellerValue - Sellers[sellerIndex].value + 1));
+		sellerIndex = lowerSellerBound + rand_r(&seeds[threadNum]) % (upperSellerBound - lowerSellerBound);
+		askPrice = Sellers[sellerIndex].value + (rand_r(&seeds[threadNum]) % (maxSellerValue - Sellers[sellerIndex].value + 1));
 
 	 	//	Let's see if a deal can be made...
 	 	//
 		if ((Buyers[buyerIndex].quantityHeld == 0) && (Sellers[sellerIndex].quantityHeld == 1) && (bidPrice >= askPrice))
 		{
 	 		//	First, compute the transaction price...
-			transactionPrice = askPrice + rand() % (bidPrice - askPrice + 1);
+			transactionPrice = askPrice + rand_r(&seeds[threadNum]) % (bidPrice - askPrice + 1);
 			Buyers[buyerIndex].price = transactionPrice;
 			Sellers[sellerIndex].price = transactionPrice;
 
