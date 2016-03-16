@@ -6,5 +6,7 @@
 ./cpp-benchmark-2.sh
 ./go-benchmark-2.sh
 #./haskell-benchmark-2.sh
+./java-benchmark-new-2.sh
+./java-benchmark-old-2.sh
 ./scala-benchmark-2.sh
 #./erlang-benchmark-2.sh
