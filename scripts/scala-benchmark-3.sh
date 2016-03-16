@@ -12,6 +12,6 @@ for threads in ${parameters[@]}
 do
 for ((i=0; i<10; i++))
 do 
-{ /usr/bin/time -f "${threads}1,%e,%U,%S,%M" java -jar /models/scala/target/scala-2.11/ZIscala-assembly-1.0.jar -n 100000000 -a 1000000 -t $threads ; } 2>> results/experiment-3/scala-benchmark.csv
+{ /usr/bin/time -f "${threads},%e,%U,%S,%M" java -jar /models/scala/target/scala-2.11/ZIscala-assembly-1.0.jar -n 100000000 -a 1000000 -t $threads ; } 2>> results/experiment-3/scala-benchmark.csv
 done
 done
