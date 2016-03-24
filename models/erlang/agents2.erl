@@ -1,7 +1,7 @@
 -module(agents2).
-%-export([zi_threads/5, run/5]).
 -compile(export_all).
 -import(rand, [uniform/1]).
+%-export([zi_threads/5, run/5, main/1, wait_for_n_tasks/1,run_task_and_notify_completion/7]).
 %% create individual sellers and buyers with sell costs and buy values
 seller(MaxSell,N) -> 
 	Cost = rand:uniform(MaxSell-1),
@@ -118,11 +118,11 @@ zi_threads(0,NumSteps,NumAgents,MaxSell,MaxBuy) ->
 	done;
 zi_threads(NumThreads,NumSteps,NumAgents,MaxSell,MaxBuy) ->
 	%io:format("~w~n",[erlang:timestamp()]),
-	spawn(agents2,run,[NumThreads-1,NumSteps,NumAgents,NumAgents,MaxSell,MaxBuy]),
+	spawn(agents2,run,[NumSteps,NumAgents,NumAgents,MaxSell,MaxBuy]),
 	zi_threads(NumThreads-1,NumSteps,NumAgents,MaxSell,MaxBuy).
 
 main(Args) ->
- %io:fwrite("Args"),
+ io:fwrite("Args"),
  Par = list_to_tuple(Args),
  ThreadsNumeric = list_to_integer(element(1, Par)),
  StepsNumeric = list_to_integer(element(2, Par)),
@@ -135,7 +135,7 @@ main(Args) ->
  io:format("Sell: ~w~n", [SellNumeric]),
  io:format("Buy: ~w~n", [BuyNumeric]),
  Self = self(),
- Task = fun (I) -> spawn(?MODULE, run_task_and_notify_completion, [Self, fun run/5, StepsNumeric, AgentsNumeric, AgentsNumeric, SellNumeric, BuyNumeric]) end,
+ Task = fun (I) -> spawn(?MODULE, run_task_and_notify_completion, [Self, fun run/5, StepsNumeric div ThreadsNumeric, AgentsNumeric div ThreadsNumeric, AgentsNumeric div ThreadsNumeric, SellNumeric, BuyNumeric]) end,
 lists:foreach(Task, lists:seq(1, ThreadsNumeric)),
 wait_for_n_tasks(ThreadsNumeric).
 %[StepsNumeric, AgentsNumeric, SellNumeric, BuyNumeric]
