@@ -1,9 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Zero Intelligence Traders
-;; Version 5
+;; Version 6
 ;; CSS 739 - Advanced Agent-Based Modeling
 ;; George Mason University
-;; Fall 2015 - 25 October 2015
+;; Fall 2015 - 17 March 2016
 ;; Author: Dale K. Brearcliffe
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (ns zi-traders.core
@@ -30,6 +30,26 @@
    "Given a vector of buyers or sellers, atomically change a value 
    of one of the agents"
    (swap! agents assoc idx (assoc (nth @agents idx) dtk vl)))
+
+; ============
+; Implements Thread Local Random
+; https://groups.google.com/forum/#!topic/clojure/pDa6WYnZQ68
+
+(def thread-local-random-state (new java.util.Random)) ;; just an initial global binding
+
+(defn lrand-int
+  "Return a random integer using the thread-local random state."
+  [n]
+  (if (< n 1)
+    0
+    (. thread-local-random-state (nextInt n))))
+
+(defn lrand
+  "Return a random float between 0 and 1 using the thread-local random state."
+  []
+  (. thread-local-random-state (nextFloat)))
+
+;============
 
 (defn initialize [num-threads num-agents num-trades]
    ; Some general parameters for the simulation 
@@ -90,19 +110,18 @@
                                   (* (+ number-bought number-sold) (* avg-price avg-price))) 
                                (- (+ number-bought number-sold) 1))))]
       
-      (println (str number-bought " items bought and " number-sold " items sold"))         
-      (println (str "The average price = " avg-price " and the s.d. is " sd "\\n")))) ; END compute-statistics
+      (println (str number-bought " items bought and " number-sold " items sold"))     
+      (println (str "The average price = " avg-price " and the s.d. is " sd "\n"))
+      )) ; END compute-statistics
 
 (defn start-trading [num-threads num-agents num-trades]
    
-   (println (str "\\nZERO INTELLIGENCE TRADERS\\n"))
+   (println (str "\nZERO INTELLIGENCE TRADERS\n"))
    
    (initialize num-threads num-agents num-trades)
    
-   (time (let [threads (range num-threads)
-         future-work (doall (map #(future (do-trades %)) threads))
-         results (map deref future-work)]
-         (doseq [s results] )))
+   ;Improved futures via pmap
+   (time (doall (pmap do-trades (range num-threads))))
    
    (compute-statistics)
    (shutdown-agents)) ; END start-trading
@@ -112,8 +131,8 @@
        (c/cli args
               ["-a" "number of agents" :default 1000
                                        :parse-fn #(Integer. %)]
-              ["-n" "maximum number of trades" :default 10000
+              ["-n" "maximum trades"   :default 10000
                                        :parse-fn #(Integer. %)]
-                ["-t" "threads to use" :default 1
+              ["-t" "threads to use"   :default 1
                                        :parse-fn #(Integer. %)])]
   (start-trading (:t options) (:a options) (:n options))))
