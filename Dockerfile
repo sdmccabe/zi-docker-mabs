@@ -5,7 +5,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN echo "deb http://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
 RUN apt-get update
-RUN apt-get install -yqq openjdk-7-jdk golang erlang erlang-doc ghc ghc-prof ghc-doc scala sbt leiningen time git cabal-install curl build-essential checkinstall libgflags-dev
+RUN apt-get install -yqq openjdk-7-jdk golang erlang erlang-doc ghc ghc-prof ghc-doc scala sbt leiningen time git cabal-install curl build-essential checkinstall libgflags-dev python-dev python-setuptools python-pip
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
