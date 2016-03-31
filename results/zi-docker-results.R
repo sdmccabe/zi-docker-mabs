@@ -7,6 +7,7 @@ library(scales)
 library(ggthemes)
 library(sitools)
 library(magrittr)
+library(xtable)
 
 perfplot <- function (i) {
   # take an argument 1, 2, 3
@@ -14,9 +15,14 @@ perfplot <- function (i) {
     stop("Invalid argument")
   }
   
-  setwd(paste0("~/Dropbox/zi-docker/results/experiment-", i))
   
-  languages <- c("cpp", "c", "c_openmp", "go", "scala",  "java_new", "java_old", "clojure") 
+  setwd(paste0("~/Dropbox/zi-docker/results/experiment-", i))
+  if (i == 3) {
+    languages <- c("cpp", "c", "c_openmp", "go", "scala",  "java_new", "java_old", "clojure") 
+  } else {
+    languages <- c("cpp", "c", "c_openmp", "go", "scala",  "java_new", "java_old", "clojure", "erlang", "python")   
+  }
+  
 
   #gather(dat, Type, Time, 2:4)
   #java_new_results <- read_csv("java-benchmark-new.csv")
@@ -81,11 +87,23 @@ perfplot <- function (i) {
     annotation_logticks(sides="l") +
     scale_fill_discrete(guide=FALSE)
   #annotation_logticks(sides = "l") 
+
+   print_results <- big_wall_results %>% group_by(Language, threads) %>% summarize(mean = round(mean(Time), 2))
+   
+   t1 <- spread(print_results, threads, mean)
+   t2 <- spread(print_results, Language, mean)
+   
+   
+   write_csv(big_wall_results, "full-results.csv")
+   write_csv(print_results, "summmary-results.csv")
    
    ggsave(paste0("../experiment-", i, "-performance.png"), p1)
    ggsave(paste0("../experiment-", i, "-speedup.png"), p2)
    ggsave(paste0("../experiment-", i, "-memory.png"), p3)
+   #print(xtable(t1), file = paste0("../experiment-", i, "-table.tex"), include.rownames = F)
+   print(xtable(t2), file = paste0("../experiment-", i, "-table.tex"), include.rownames = F)  
 }
 perfplot(1)
 perfplot(2)
 perfplot(3)
+
