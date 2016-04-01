@@ -4,7 +4,9 @@ import java.util.concurrent._
 
 class BuyerAgent(maxBuyerValue: Double) {
 
-  private var value: Double = Math.random() * maxBuyerValue
+
+  //private var cost: Double = ThreadLocalRandom.current().nextDouble(0, 1) * maxCost
+  private var value: Double = ThreadLocalRandom.current().nextDouble(0, 1) * maxBuyerValue
 
   private var traded: Boolean = false
 
@@ -18,5 +20,6 @@ class BuyerAgent(maxBuyerValue: Double) {
 
   def hasTraded(): Boolean = (traded)
 
-  def formBidPrice(): Double = Math.random() * value
+  //def formBidPrice(): Double = Math.random() * value
+  def formBidPrice(): Double = ThreadLocalRandom.current().nextDouble(0, 1) * value
 }

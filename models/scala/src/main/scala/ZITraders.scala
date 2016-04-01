@@ -4,6 +4,7 @@ import java.util.Calendar
 import java.util.Random
 import java.text.DecimalFormat
 import com.mosesn.pirate.Pirate
+import java.util.concurrent._
 
 object ZITraders {
 
@@ -151,7 +152,7 @@ class ZITraders private (threads: Int, agents: Int, trades: Int) {
 
     var endSellers: Int = _
 
-    var randomStream: Random = new Random()
+    //var randomStream: Random = new Random()
 
     def run() {
       var buyerIndex: Int = 0
@@ -162,7 +163,8 @@ class ZITraders private (threads: Int, agents: Int, trades: Int) {
       var counter = 1
       while (counter <= maxTrades) {
         do {
-          buyerIndex = beginBuyers + randomStream.nextInt(endBuyers - beginBuyers + 1) - 
+          //buyerIndex = beginBuyers + randomStream.nextInt(endBuyers - beginBuyers + 1) - 
+          buyerIndex = beginBuyers + ThreadLocalRandom.current().nextInt(endBuyers - beginBuyers + 1) - 
             1
           if (!people.buyers(buyerIndex).lock.tryAcquire()) {
             //continue
@@ -177,7 +179,8 @@ class ZITraders private (threads: Int, agents: Int, trades: Int) {
         bidPrice = people.buyers(buyerIndex).formBidPrice()
         do {
           sellerIndex = beginSellers + 
-            randomStream.nextInt(endSellers - beginSellers + 1) - 
+            //randomStream.nextInt(endSellers - beginSellers + 1) - 
+            ThreadLocalRandom.current().nextInt(endSellers - beginSellers + 1) -
             1
           if (!people.sellers(sellerIndex).lock.tryAcquire()) {
             //continue
@@ -191,7 +194,8 @@ class ZITraders private (threads: Int, agents: Int, trades: Int) {
         } while (true);
         askPrice = people.sellers(sellerIndex).formAskPrice()
         if (bidPrice > askPrice) {
-          transactionPrice = askPrice + randomStream.nextDouble() * (bidPrice - askPrice)
+          //transactionPrice = askPrice + randomStream.nextDouble() * (bidPrice - askPrice)
+          transactionPrice = askPrice + ThreadLocalRandom.current().nextDouble(0, 1) * (bidPrice - askPrice)
           people.buyers(buyerIndex).setTraded(true)
           people.buyers(buyerIndex).price = transactionPrice
           people.sellers(sellerIndex).setTraded(true)
@@ -224,7 +228,7 @@ class ZITraders private (threads: Int, agents: Int, trades: Int) {
       var beginSellers: Int, 
       var endSellers: Int) extends Runnable {
 
-    var randomStream: Random = new Random()
+    //var randomStream: Random = new Random()
 
     def run() {
       var buyerIndex: Int = 0
@@ -235,18 +239,21 @@ class ZITraders private (threads: Int, agents: Int, trades: Int) {
       var counter = 1
       while (counter <= maxTrades) {
         do {
-          buyerIndex = beginBuyers + randomStream.nextInt(endBuyers - beginBuyers + 1) - 
+          //buyerIndex = beginBuyers + randomStream.nextInt(endBuyers - beginBuyers + 1) - 
+          buyerIndex = beginBuyers + ThreadLocalRandom.current().nextInt(endBuyers - beginBuyers + 1) - 
             1
         } while (people.buyers(buyerIndex).hasTraded());
         bidPrice = people.buyers(buyerIndex).formBidPrice()
         do {
           sellerIndex = beginSellers + 
-            randomStream.nextInt(endSellers - beginSellers + 1) - 
+            //randomStream.nextInt(endSellers - beginSellers + 1) - 
+            ThreadLocalRandom.current().nextInt(endSellers - beginSellers + 1) - 
             1
         } while (people.sellers(sellerIndex).hasTraded());
         askPrice = people.sellers(sellerIndex).formAskPrice()
         if (bidPrice > askPrice) {
-          transactionPrice = askPrice + randomStream.nextDouble() * (bidPrice - askPrice)
+          //transactionPrice = askPrice + randomStream.nextDouble() * (bidPrice - askPrice)
+          transactionPrice = askPrice + ThreadLocalRandom.current().nextDouble() * (bidPrice - askPrice)
           people.buyers(buyerIndex).setTraded(true)
           people.buyers(buyerIndex).price = transactionPrice
           people.sellers(sellerIndex).setTraded(true)
