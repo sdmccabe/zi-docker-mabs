@@ -7,7 +7,7 @@ cd ../../scripts/
 echo "threads,real,user,sys,memory" > results/experiment-1/erlang-benchmark.csv
 
 
-declare -a parameters=(1 2 4 8 10 16 20 25 32 40 50 80 100 125 200 250 400 500)
+declare -a parameters=(1 2 4 5 8 10 16 20 25 32 40 50 80 100 125 200 250 400 500)
 for threads in ${parameters[@]}
 do
 for ((i=0; i<10; i++))
