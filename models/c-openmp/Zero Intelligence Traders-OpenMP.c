@@ -130,8 +130,8 @@ void DoTrades(int threadNum)
 	
 	int lowerBuyerBound, upperBuyerBound, lowerSellerBound, upperSellerBound;
 	
-	if (numThreads <= 10)
-		printf("Thread %i up and running\n", threadNum);
+	//if (numThreads <= 10)
+		//printf("Thread %i up and running\n", threadNum);
 
 	lowerBuyerBound = threadNum * agentsPerThread;
 	upperBuyerBound = (threadNum + 1) * agentsPerThread - 1;

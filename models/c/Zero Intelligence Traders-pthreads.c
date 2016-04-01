@@ -122,7 +122,7 @@ void *DoTrades (void *threadN)
 	int i, buyerIndex, sellerIndex;
 	int bidPrice, askPrice, transactionPrice;
 	int threadNum = *(int*) threadN;
-	printf("%d\n",threadNum);
+	//printf("%d\n",threadNum);
 	
 	int lowerBuyerBound, upperBuyerBound, lowerSellerBound, upperSellerBound;
 	
