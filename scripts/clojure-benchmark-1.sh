@@ -14,6 +14,6 @@ for threads in ${parameters[@]}
 do
 for ((i=0; i<10; i++))
 do 
-{ /usr/bin/time -f "${threads},%e,%U,%S,%M" java -jar /models/clojure/zi-traders/zi-traders-0.1.0-SNAPSHOT-standalone.jar -n 1000000 -a 10000 -t $threads ; } 2>> results/experiment-1/clojure-benchmark.csv
+{ /usr/bin/time -f "${threads},%e,%U,%S,%M" java -jar /models/clojure/zi-traders/target/zi-traders-0.1.0-SNAPSHOT-standalone.jar -n 1000000 -a 10000 -t $threads ; } 2>> results/experiment-1/clojure-benchmark.csv
 done
 done
